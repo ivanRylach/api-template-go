@@ -1,0 +1,68 @@
+version: '3.1'
+
+networks:
+  api-service:
+    name: api-service
+
+services:
+
+  mongo:
+    image: mongo:4.4
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "root"
+      MONGO_INITDB_ROOT_PASSWORD: "example"
+    networks:
+      - api-service
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - "9001:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: "root"
+      ME_CONFIG_MONGODB_ADMINPASSWORD: "example"
+    networks:
+      - api-service
+
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    restart: always
+    ports:
+      - "2181:2181"
+    networks:
+      - api-service
+
+  kafka:
+    image: wurstmeister/kafka:2.13-2.7.0
+    container_name: kafka-broker
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: "kafka"
+      KAFKA_CREATE_TOPICS: "events:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - api-service
+    depends_on:
+      - zookeeper
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "9000:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092"
+      KAFKA_CLUSTERS_0_ZOOKEEPER: "zookeeper:2181"
+    restart: always
+    networks:
+      - api-service
+    depends_on:
+      - kafka

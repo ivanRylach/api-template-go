@@ -6,3 +6,9 @@ vendor:
 
 build:
 	go build -o ./bin/api-service
+
+test:
+	go test ./...
+
+fmt:
+	go fmt ./...

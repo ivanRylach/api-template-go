@@ -1,5 +1,4 @@
-
-.PHONY: vendor
+.PHONY:
 
 vendor:
 	go mod tidy && go mod vendor

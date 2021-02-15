@@ -1,7 +1,7 @@
-.PHONY:
+.PHONY: vendor
 
 vendor:
-	go mod tidy && go mod vendor
+	go mod tidy ; go mod vendor
 
 build:
 	go build -mod=vendor -o ./bin/api-service

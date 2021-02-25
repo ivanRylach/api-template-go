@@ -15,7 +15,7 @@ import (
 
 func main() {
 	util.ConfigureLogging()
-	mongo := mongodb.NewClient("mongodb://root:example@localhost:27017")
+	mongo := mongodb.NewClient("mongodb://root:password123@localhost:27017")
 	recordsRepo := records.NewRepository(mongo)
 
 	httpServer := http.NewServer(recordsRepo)

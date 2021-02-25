@@ -6,19 +6,25 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 	"go.uber.org/zap"
+	"time"
 )
 
 type RepositoryImpl struct {
+	Client     *mongodb.Client
 	Collection *mongo.Collection
 }
 
 func NewRepository(client *mongodb.Client) *RepositoryImpl {
-	collection := client.Mongo.Database("api-template").Collection("records")
+	wcMajority := writeconcern.New(writeconcern.WMajority(), writeconcern.WTimeout(1*time.Second))
+	wcMajorityCollectionOpts := options.Collection().SetWriteConcern(wcMajority)
+	collection := client.Mongo.Database("api-template").Collection("records", wcMajorityCollectionOpts)
 
 	createIndex(context.Background(), collection, "id", true)
 
 	return &RepositoryImpl{
+		Client:     client,
 		Collection: collection,
 	}
 }

@@ -6,9 +6,7 @@ import (
 	"api.ivanrylach.github.io/v1/pkg/util"
 	"bytes"
 	"encoding/json"
-	"github.com/benweissmann/memongo"
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/zap"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,12 +15,13 @@ import (
 func TestRecords_Fetch(t *testing.T) {
 	util.ConfigureLogging()
 
-	mongoServer := startMongo(t)
-	t.Cleanup(func() {
-		mongoServer.Stop()
-	})
+	// TODO: MongoDB Transactions require a sharded deployment. Does 'memongo' support it?
+	//mongoServer := startMongo(t)
+	//t.Cleanup(func() {
+	//	mongoServer.Stop()
+	//})
 
-	mongo := mongodb.NewClient(mongoServer.URI())
+	mongo := mongodb.NewClient("mongodb://root:password123@localhost:27017")
 	recordsRepo := records.NewRepository(mongo)
 	router := NewRouter(recordsRepo)
 
@@ -53,11 +52,11 @@ func TestRecords_Fetch(t *testing.T) {
 	assert.Equal(t, "one", view.Name)
 }
 
-func startMongo(t *testing.T) *memongo.Server {
-	mongoServer, err := memongo.Start("4.2.0")
-	if err != nil {
-		zap.S().Error(err)
-		t.FailNow()
-	}
-	return mongoServer
-}
+//func startMongo(t *testing.T) *memongo.Server {
+//	mongoServer, err := memongo.Start("4.2.0")
+//	if err != nil {
+//		zap.S().Error(err)
+//		t.FailNow()
+//	}
+//	return mongoServer
+//}

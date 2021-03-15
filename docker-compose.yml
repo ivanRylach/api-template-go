@@ -12,17 +12,6 @@ volumes:
 
 services:
 
-#  mongo:
-#    image: mongo:4.4
-#    restart: always
-#    ports:
-#    - "27017:27017"
-#    environment:
-#      MONGO_INITDB_ROOT_USERNAME: "root"
-#      MONGO_INITDB_ROOT_PASSWORD: "example"
-#    networks:
-#      - api-service
-
   mongodb-sharded:
     image: 'docker.io/bitnami/mongodb-sharded:4.4-debian-10'
     environment:

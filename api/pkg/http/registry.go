@@ -12,5 +12,5 @@ func registerHandlers(router *gin.Engine, records *records.Repository) {
 
 	r := Records{Repo: records}
 	v1.POST("/records", r.Create())
-	v1.GET("/record/:id", r.Fetch())
+	v1.GET("/records/:id", r.Fetch())
 }
